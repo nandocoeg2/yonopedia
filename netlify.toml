@@ -1,2 +1,4 @@
 [functions]
   external_node_modules = ["@prisma/client"]
+[build]
+  command = "npx prisma generate && npm run build"
