@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { ReceiptText, ShoppingCart } from "lucide-react";
+import { Loader, ReceiptText, ShoppingCart } from "lucide-react";
 import { CartProvider, useCart } from "../contexts/CartContext";
 import toast from "react-hot-toast";
 
@@ -12,6 +12,7 @@ function MainNav() {
   const [user, setUser] = useState<{ email: string } | null>(null);
   const router = useRouter();
   const { cartCount } = useCart();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -31,6 +32,7 @@ function MainNav() {
 
   const handleLogout = async () => {
     try {
+      setIsLoggingOut(true);
       const response = await fetch("/api/logout", { method: "POST" });
       const data = await response.json();
 
@@ -41,11 +43,13 @@ function MainNav() {
       }
     } catch (error) {
       console.error("Error during logout:", error);
+    } finally {
+      setIsLoggingOut(false);
     }
   };
 
   return (
-    <nav className="bg-whtie p-4 border border-b-2 border-gray-200">
+    <nav className="bg-white p-4 border border-b-2 border-gray-200 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto flex justify-between items-center">
         <Link href="/" className="text-green-500 text-3xl font-bold">
           YonoPedia
@@ -78,10 +82,11 @@ function MainNav() {
               </Link>
               <p className="text-gray-700">{user?.email}</p>
               <button
-                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600"
+                className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleLogout}
+                disabled={isLoggingOut}
               >
-                Logout
+                {isLoggingOut ? <div className="flex items-center gap-2"><Loader className="h-5 w-5 mr-1 animate-spin" /> <p>Logout</p></div> : "Logout"}
               </button>
             </>
           ) : (
@@ -113,9 +118,9 @@ export default function RootLayout({
 }>) {
   return (
     <CartProvider>
-      <div>
+      <div className="min-h-screen flex flex-col">
         <MainNav />
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="flex-grow bg-white rounded-lg shadow-sm p-6 mt-2">
           <div className="flex sm:flex-row justify-center items-start sm:items-center gap-4 mb-6">
             {children}
           </div>
