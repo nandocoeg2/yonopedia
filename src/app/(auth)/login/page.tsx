@@ -29,7 +29,6 @@ function Login() {
         email,
         password,
       });
-      console.log(result);
 
       if (!result.success) {
         const formattedErrors = result.error.errors.reduce((acc, curr) => {

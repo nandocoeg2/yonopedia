@@ -86,7 +86,14 @@ function MainNav() {
                 onClick={handleLogout}
                 disabled={isLoggingOut}
               >
-                {isLoggingOut ? <div className="flex items-center gap-2"><Loader className="h-5 w-5 mr-1 animate-spin" /> <p>Logout</p></div> : "Logout"}
+                {isLoggingOut ? (
+                  <div className="flex items-center gap-2">
+                    <Loader className="h-5 w-5 mr-1 animate-spin" />{" "}
+                    <p>Logout</p>
+                  </div>
+                ) : (
+                  "Logout"
+                )}
               </button>
             </>
           ) : (
