@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "rm -rf node_modules/.prisma && rm -rf .netlify/cache",
     "postbuild": "prisma generate"
   },
   "dependencies": {
