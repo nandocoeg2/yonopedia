@@ -1,7 +1,24 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 import { getToken, verifyToken } from "@/app/lib/auth";
-import { Cart, Product } from "@prisma/client";
+
+// Define types based on Prisma schema
+type Product = {
+  id: string;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  quantity: number;
+};
+
+type Cart = {
+  id: string;
+  userId: string;
+  productId: string;
+  quantity: number;
+};
 
 type CartWithProduct = Cart & {
   product: Product;
