@@ -84,9 +84,6 @@ export default function OrdersPage() {
                   <p className="text-lg font-bold">
                     ${order.totalAmount.toFixed(2)}
                   </p>
-                  <span className="inline-block px-2 py-1 text-sm rounded-full bg-green-100 text-green-800">
-                    {order.status.toUpperCase()}
-                  </span>
                 </div>
               </div>
 

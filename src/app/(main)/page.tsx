@@ -63,10 +63,6 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        if (response.status === 401) {
-          router.push("/login");
-          return;
-        }
         throw new Error("Failed to add to cart");
       }
 
@@ -75,6 +71,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add to cart. Please try again.");
+      router.push("/login");
     } finally {
       setIsAddingToCart(null);
     }

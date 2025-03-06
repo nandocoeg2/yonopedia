@@ -19,19 +19,22 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const cartItems = await prisma.cart.findMany({
+    const cartItems = (await prisma.cart.findMany({
       where: {
         userId: payload.id as string,
       },
       include: {
-        product: true
-      }
-    }) as CartWithProduct[];
+        product: true,
+      },
+    })) as CartWithProduct[];
 
     return NextResponse.json({ cartItems });
   } catch (error) {
-    console.error('Error fetching cart:', error);
-    return NextResponse.json({ error: "Failed to fetch cart" }, { status: 500 });
+    console.error("Error fetching cart:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch cart" },
+      { status: 500 }
+    );
   }
 }
 
@@ -49,7 +52,10 @@ export async function POST(request: Request) {
 
     const { productId } = await request.json();
     if (!productId) {
-      return NextResponse.json({ error: "Product ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Product ID is required" },
+        { status: 400 }
+      );
     }
 
     // Check if the product exists
@@ -78,7 +84,7 @@ export async function POST(request: Request) {
           id: existingCartItem.id,
         },
         data: {
-          quantity: (existingCartItem.quantity || 0) + 1
+          quantity: (existingCartItem.quantity || 0) + 1,
         },
       });
       return NextResponse.json(updatedCartItem);
@@ -89,14 +95,17 @@ export async function POST(request: Request) {
       data: {
         userId: payload.id as string,
         productId,
-        quantity: 1
-      }
+        quantity: 1,
+      },
     });
 
     return NextResponse.json(newCartItem);
   } catch (error) {
-    console.error('Error adding to cart:', error);
-    return NextResponse.json({ error: "Failed to add to cart" }, { status: 500 });
+    console.error("Error adding to cart:", error);
+    return NextResponse.json(
+      { error: "Failed to add to cart" },
+      { status: 500 }
+    );
   }
 }
 
@@ -113,19 +122,25 @@ export async function DELETE(request: Request) {
     }
 
     const { pathname } = new URL(request.url);
-    const cartId = pathname.split('/').pop();
+    const cartId = pathname.split("/").pop();
 
     if (!cartId) {
-      return NextResponse.json({ error: "Cart ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Cart ID is required" },
+        { status: 400 }
+      );
     }
 
     // Verify the cart item belongs to the user
     const cartItem = await prisma.cart.findUnique({
-      where: { id: cartId }
+      where: { id: cartId },
     });
 
     if (!cartItem || cartItem.userId !== payload.id) {
-      return NextResponse.json({ error: "Cart item not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Cart item not found" },
+        { status: 404 }
+      );
     }
 
     await prisma.cart.delete({
@@ -136,8 +151,10 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json({ message: "Cart item deleted successfully" });
   } catch (error) {
-    console.error('Error deleting cart item:', error);
-    return NextResponse.json({ error: "Failed to delete cart item" }, { status: 500 });
+    console.error("Error deleting cart item:", error);
+    return NextResponse.json(
+      { error: "Failed to delete cart item" },
+      { status: 500 }
+    );
   }
 }
-

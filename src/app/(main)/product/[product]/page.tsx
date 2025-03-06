@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   ArrowLeft,
@@ -27,6 +27,7 @@ export default function ProductPage() {
   const [product, setProduct] = useState<Product>();
   const [isLoading, setIsLoading] = useState(false);
   const { updateCartCount } = useCart();
+  const router = useRouter();
 
   const addToCart = async () => {
     try {
@@ -49,6 +50,7 @@ export default function ProductPage() {
     } catch (error) {
       console.error("Error adding to cart:", error);
       toast.error("Failed to add to cart. Please try again.");
+      router.push("/login");
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +103,7 @@ export default function ProductPage() {
               <div className="flex items-center text-gray-700">
                 <Banknote className="h-6 w-6 mr-1 text-gray-400" />
                 <span className="text-2xl font-bold text-green-600">
-                  {product?.price || "$0.00"}
+                  ${product?.price}
                 </span>
               </div>
             </div>

@@ -16,7 +16,7 @@ function MainNav() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("/api/auth/check");
+        const response = await fetch("/api/check");
         const data = await response.json();
         setIsLoggedIn(data.isLoggedIn);
         setUser(data.decoded);
