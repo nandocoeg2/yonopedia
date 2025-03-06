@@ -72,15 +72,19 @@ export default function CartPage() {
       });
 
       if (!orderResponse.ok) {
-        throw new Error("Failed to create order");
+        const error = await orderResponse.json();
+        throw new Error(error.error || "Failed to create order");
       }
 
       await updateCartCount(); // Update cart count after clearing
       toast.success("Order placed successfully!");
       router.push("/checkout/success");
     } catch (error) {
-      console.error("Error during checkout:", error);
-      toast.error("Failed to process checkout. Please try again.");
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     } finally {
       setIsCheckingOut(false);
     }

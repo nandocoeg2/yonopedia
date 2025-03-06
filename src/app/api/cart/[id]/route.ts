@@ -1,8 +1,11 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/app/lib/prisma';
+import { NextResponse, NextRequest } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 import { decryptToken, getToken } from "@/app/lib/auth";
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const token = await getToken();
     if (!token) {
@@ -14,9 +17,12 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const cartId = params.id;
+    const cartId = context.params.id;
     if (!cartId) {
-      return NextResponse.json({ error: "Cart ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Cart ID is required" },
+        { status: 400 }
+      );
     }
 
     // Delete the cart item
@@ -37,7 +43,10 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  request: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const token = await getToken();
     if (!token) {
@@ -49,9 +58,12 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const cartId = params.id;
+    const cartId = context.params.id;
     if (!cartId) {
-      return NextResponse.json({ error: "Cart ID is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Cart ID is required" },
+        { status: 400 }
+      );
     }
 
     const { quantity } = await request.json();
@@ -81,4 +93,4 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       { status: 500 }
     );
   }
-} 
+}

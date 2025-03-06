@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = await decryptToken(token) as DecodedToken;
+    const decoded = (await decryptToken(token)) as DecodedToken;
     if (!decoded) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
@@ -48,16 +48,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = await decryptToken(token) as DecodedToken;
+    const decoded = (await decryptToken(token)) as DecodedToken;
     if (!decoded) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
     const { items, totalAmount } = await request.json();
 
-    // Start a transaction to ensure all operations succeed or fail together
     const order = await prisma.$transaction(async (tx) => {
-      // Check if all products have sufficient quantity
       for (const item of items) {
         const product = await tx.product.findUnique({
           where: { id: item.productId },
@@ -72,19 +70,17 @@ export async function POST(request: Request) {
         }
       }
 
-      // Update product quantities
       for (const item of items) {
         await tx.product.update({
           where: { id: item.productId },
           data: {
             quantity: {
-              decrement: item.quantity
-            }
-          }
+              decrement: item.quantity,
+            },
+          },
         });
       }
 
-      // Create the order
       const newOrder = await tx.order.create({
         data: {
           userId: decoded.id,
@@ -104,7 +100,6 @@ export async function POST(request: Request) {
         },
       });
 
-      // Clear the user's cart
       await tx.cart.deleteMany({
         where: {
           userId: decoded.id,
