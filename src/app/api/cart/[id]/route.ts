@@ -1,12 +1,14 @@
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import { decryptToken, getToken } from "@/app/lib/auth";
 
 export async function DELETE(
-  request: NextRequest,
-  context: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: cartId } = await params;
+    
     const token = await getToken();
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -17,7 +19,6 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const cartId = context.params.id;
     if (!cartId) {
       return NextResponse.json(
         { error: "Cart ID is required" },
@@ -44,10 +45,12 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  request: NextRequest,
-  context: { params: { id: string } }
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: cartId } = await params;
+    
     const token = await getToken();
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -58,7 +61,6 @@ export async function PATCH(
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
 
-    const cartId = context.params.id;
     if (!cartId) {
       return NextResponse.json(
         { error: "Cart ID is required" },
