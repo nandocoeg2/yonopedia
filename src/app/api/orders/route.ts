@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     const { items, totalAmount } = await request.json();
 
-    const order = await prisma.$transaction(async (tx: typeof prisma) => {
+    const order = await prisma.$transaction(async (tx: any) => {
       for (const item of items) {
         const product = await tx.product.findUnique({
           where: { id: item.productId },
