@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prebuild": "rm -rf node_modules/.prisma && rm -rf .netlify/cache"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",
